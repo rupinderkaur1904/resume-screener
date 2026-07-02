@@ -1,0 +1,62 @@
+services:
+  db:
+    image: pgvector/pgvector:pg16   # Postgres 16 with the pgvector extension pre-installed
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-resume_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-resume_pass}
+      POSTGRES_DB: ${POSTGRES_DB:-resume_screener}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data   # named volume -> data survives `docker compose down`
+    ports:
+      - "5432:5432"   # exposed so you can connect with a local SQL client to inspect data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-resume_user} -d ${POSTGRES_DB:-resume_screener}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    env_file:
+      - ./backend/.env   # copy backend/.env.example -> backend/.env before first run
+    environment:
+      # "db" below is resolved via Docker's internal DNS - it's the service name above,
+      # not localhost, because backend and db are different containers on the same
+      # docker-compose network.
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-resume_user}:${POSTGRES_PASSWORD:-resume_pass}@db:5432/${POSTGRES_DB:-resume_screener}
+    depends_on:
+      db:
+        condition: service_healthy   # wait for Postgres to actually accept connections, not just "started"
+    volumes:
+      - uploads_data:/app/uploads        # uploaded PDFs persist across container restarts
+      - model_cache:/app/model_cache     # HuggingFace model weights persist -> no re-download on rebuild
+      - ./backend/app:/app/app  
+      - ./backend/tests:/app/tests
+      -  ./backend/pytest.ini:/app/pytest.ini  # bind mount: live-reload your code changes during development
+    ports:
+      - "9000:8000"
+    command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      VITE_API_BASE_URL: http://backend:8000
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules   # anonymous volume so the host's missing node_modules doesn't shadow the container's
+    ports:
+      - "3000:5173"
+
+volumes:
+  postgres_data:
+  uploads_data:
+  model_cache:

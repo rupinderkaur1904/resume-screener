@@ -1,0 +1,33 @@
+# ── Secrets (NEVER commit these) ──────────────────
+backend/.env
+*.env
+
+# ── Python ────────────────────────────────────────
+backend/.venv/
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+backend/test.db
+
+# ── Node ──────────────────────────────────────────
+frontend/node_modules/
+frontend/dist/
+frontend/.next/
+
+# ── Test/temp files at root ───────────────────────
+login.json
+payload.json
+structure.txt
+
+# ── Docker volumes (local data, not code) ─────────
+postgres_data/
+uploads_data/
+model_cache/
+
+# ── VS Code ───────────────────────────────────────
+.vscode/
+
+# ── OS files ──────────────────────────────────────
+.DS_Store
+Thumbs.db
