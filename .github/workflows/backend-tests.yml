@@ -31,7 +31,6 @@ jobs:
       DATABASE_URL: postgresql+asyncpg://resume_user:resume_pass@localhost:5432/resume_screener
       SECRET_KEY: ci-test-secret-key
       MIGRATION_TEST_DB_URL: postgresql+psycopg://resume_user:resume_pass@localhost:5432/resume_screener
-      DISABLE_RATE_LIMITING: "true"
 
     defaults:
       run:
@@ -53,8 +52,3 @@ jobs:
 
       - name: Run unit and migration tests
         run: pytest tests/test_new_features.py tests/test_pdf_parser.py tests/test_migration.py tests/test_inference.py tests/test_security.py -v
-        env:
-          DATABASE_URL: postgresql+asyncpg://resume_user:resume_pass@localhost:5432/resume_screener
-          SECRET_KEY: ci-test-secret-key
-          MIGRATION_TEST_DB_URL: postgresql+psycopg://resume_user:resume_pass@localhost:5432/resume_screener
-          DISABLE_RATE_LIMITING: "true"

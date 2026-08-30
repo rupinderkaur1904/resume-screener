@@ -31,9 +31,6 @@ backend/start-dev.bat
 *.tar
 *.tar.gz
 
-# ── Freebuff internal ───────────────────────────
-.freebuff/
-
 # ── Docker volumes (local data, not code) ─────────
 postgres_data/
 uploads_data/

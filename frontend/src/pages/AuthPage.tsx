@@ -6,14 +6,7 @@ import { getErrorMessage } from '@/lib/helpers'
 import { Logo } from '@/components/Logo'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-// Local fallback for Label component (avoids import resolution issues)
-function Label({ children, htmlFor }: { children: React.ReactNode; htmlFor?: string }) {
-  return (
-    <label htmlFor={htmlFor} className="text-sm font-medium">
-      {children}
-    </label>
-  )
-}
+import { Label } from '@/components/ui/label'
 import { cn } from '@/lib/utils'
 
 type Mode = 'signin' | 'signup'
