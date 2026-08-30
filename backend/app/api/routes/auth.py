@@ -84,7 +84,7 @@ async def login(
     """
     Authenticate with email + password, receive a Bearer token.
 
-    The token is also set as an httpOnly, Secure, SameSite=Strict cookie so
+    The token is also set as an httpOnly, Secure, SameSite=None cookie so
     the web frontend can use it without JavaScript access to the raw value.
 
     "Email not found" and "wrong password" return the identical 401 message -
@@ -121,7 +121,7 @@ async def login(
         value=token,
         httponly=True,
         secure=True,
-        samesite="strict",
+        samesite="none",  # cross-origin: Vercel frontend + Render backend
         max_age=settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60,
         path="/",
     )
