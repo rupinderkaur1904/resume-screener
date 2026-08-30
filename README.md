@@ -105,8 +105,8 @@ docker compose up --build
 ```
 
 Then open:
-- Frontend: http://localhost:5173
-- Backend API docs: http://localhost:8000/docs
+- Frontend: http://localhost:3000
+- Backend API docs: http://localhost:9000/docs
 
 First run takes a few minutes since Docker needs to pull the pgvector image and download the sentence-transformers model weights (~90MB). Both are cached in named volumes after that, so later starts are fast.
 
